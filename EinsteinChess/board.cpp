@@ -147,12 +147,11 @@ std::vector<int> Board::throwDice()
     int r=random(1,6);
     std::cout<<"生成的随机数为"<<r<<", ";
 
-    std::vector<int> temp;
 
     //红色是0,蓝色是1
-    temp=findNearby(color,r);
+    chessValid=findNearby(color,r);
 
-    int n=temp.size();
+    int n=chessValid.size();
 
     if(color==0){
         std::cout<<"红方可以走的棋子为：";
@@ -161,15 +160,12 @@ std::vector<int> Board::throwDice()
     }
 
     for(int i=0;i<n;i++){
-        std::cout<<"temp["<<i<<"]"<<temp[i];
+        std::cout<<"temp["<<i<<"]"<<chessValid[i];
     }
 
     std::cout<<std::endl;
 
-    if(temp.size()==0){
-        std::cout<<"throwDice(),temp.size==0"<<std::endl;
-    }
-    return temp;
+    return chessValid;
 
 }
 

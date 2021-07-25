@@ -12,11 +12,13 @@ Tree::Tree(Board board)
 double Tree::expandChildrenBoard(std::shared_ptr<Board> boardnow,std::vector<int> pawns,int depth)
 {
     if(depth==maxDepth){
+        boardnow->value=boardnow->getScore();
         return boardnow->getScore();
     }
 
     //检测棋局是否结束，如果结束，则算是一个特殊的叶子节点
     if(boardnow->isEnd()!=-1){
+        boardnow->value=boardnow->getScore();
         return boardnow->getScore();
     }
 
@@ -24,13 +26,11 @@ double Tree::expandChildrenBoard(std::shared_ptr<Board> boardnow,std::vector<int
 
     double t;
 
-    if(boardnow->color==rootcolor){//极小值点，电脑下棋
+    if(boardnow->color==rootcolor){//极大值点，电脑下棋
         boardnow->value=-999;
-    }else{
+    }else{//极小值点，对手下棋
         boardnow->value=999;
     }
-
-    std::shared_ptr<Board> bx;
 
     //对每一棵棋子进行循环
     for(std::size_t i=0;i<pawns.size();i++){
@@ -43,7 +43,6 @@ double Tree::expandChildrenBoard(std::shared_ptr<Board> boardnow,std::vector<int
             boardnow->chess[1]=ways[w];
             //创建一个临时指针，指向当前的棋盘扩展后的某一个棋盘
             std::shared_ptr<Board> board=std::make_shared<Board> (boardnow,boardnow->chess);
-            bx=board;
             boardnow->children.push_back(board);
 
 //            std::cout<<"当前棋盘为（红0蓝1）"<<board->color<<std::endl;
@@ -58,7 +57,7 @@ double Tree::expandChildrenBoard(std::shared_ptr<Board> boardnow,std::vector<int
             }else if(board->color==1){//代表红方已经走子，该蓝方进行走子
                 o=6;
             }
-            for(int p=0;p<6;p++){
+            for(int p=0;p<1;p++){
                 //如果棋子可以走，将其加入到可以走的棋子的数组中
                 if(board->pawn[p+o]!=0){
                     chessable.push_back(p+o+1);
@@ -68,16 +67,16 @@ double Tree::expandChildrenBoard(std::shared_ptr<Board> boardnow,std::vector<int
             //对敌方所有可以走的棋子进行扩展
             t=expandChildrenBoard(board,chessable,depth+1);
 
-            if(board->color==rootcolor&&t>board->value){//如果是电脑下棋
-                board->value=t;
+            if(boardnow->color==rootcolor&&t>boardnow->value){//如果是电脑下棋
+                boardnow->value=t;
             }
-            if(board->color==(!rootcolor)&&t<board->value){
-                board->value=t;
+            if(boardnow->color==(!rootcolor)&&t<boardnow->value){//如果不是电脑下棋，该节点为极小值节点
+                boardnow->value=t;
             }
         }
     }
 
-    return bx->value;
+    return boardnow->value;
 }
 
 std::vector<int> Tree::findBest(std::vector<int> pawns)
@@ -87,7 +86,6 @@ std::vector<int> Tree::findBest(std::vector<int> pawns)
 
     for(std::size_t i=0;i<boardRoot->children.size();i++){
         if(boardRoot->children[i]->value==temp){
-
             temp1.push_back(boardRoot->children[i]->pchess[0]);
             temp1.push_back(boardRoot->children[i]->pchess[1]);
             break;

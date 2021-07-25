@@ -30,6 +30,7 @@ public:
     int color;
     //可以走的棋子都有谁，0代表这个棋子已经被吃掉，1代表这个棋子可以走,初始时，都可以走
     int pawn[12];
+    std::vector<int> chessValid;
 
     //当前棋局的分值
     double value=0.0;

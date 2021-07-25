@@ -11,6 +11,26 @@ int main()
     int bluelay[6]={6,5,4,3,2,1};
     //初始化棋盘
     Board board(0,redlay,bluelay);
+
+//    int board1[5][5]={
+//        {0,0,1,0,0},
+//        {11,0,0,0,0},
+//        {0,0,0,0,0},
+//        {0,9,0,12,5},
+//        {0,0,0,0,0}
+//    };
+//    for(int i=0;i<5;i++){
+//        for(int j=0;j<5;j++){
+//            board.board[i][j]=board1[i][j];
+//        }
+//    }
+//    board.pawn[1]=0;
+//    board.pawn[2]=0;
+//    board.pawn[3]=0;
+//    board.pawn[5]=0;
+//    board.pawn[6]=0;
+//    board.pawn[7]=0;
+//    board.pawn[9]=0;
     board.drawTable();
 
     //人人对战
@@ -45,13 +65,14 @@ int main()
         board.color=0;
         //红方掷骰子，得到要走的棋子chessValid
 
-        std::vector<int> chessValid=board.throwDice();
+        board.throwDice();
+//        board.chessValid.push_back(5);
+
         std::shared_ptr<Board> b=std::make_shared<Board> (board);
         tree.boardRoot=b;
 
         //扩展树的节点
-        std::vector<int> t=tree.findBest(chessValid);
-        chessValid.clear();
+        std::vector<int> t=tree.findBest(board.chessValid);
         std::cout<<"红方计算出的最好的棋子为"<<t[0]<<std::endl;
         std::cout<<"红方计算出最好的走法为"<<t[1]<<std::endl;
 
